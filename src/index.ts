@@ -9,6 +9,9 @@
  */
 
 export interface Env {
+	// found in .dev.vars
+	SECRET_KEY: string;
+
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
 	// MY_KV_NAMESPACE: KVNamespace;
 	//
@@ -27,6 +30,13 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
+		const { pathname } = new URL(request.url);
+		const params = Object.fromEntries(new URLSearchParams(request.url.split('?')[1]));
+
+		return Response.json({
+			pathname,
+			params,
+			env: env.SECRET_KEY,
+		});
 	},
 };
